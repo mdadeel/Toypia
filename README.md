@@ -41,7 +41,7 @@ A modern web application connecting families with local toy sellers. Browse, rev
 ```sh
 # Clone the repository
 git clone https://github.com/mdadeel/toytopia.git
-git clone <your-repository-url>
+git clone [(https://github.com/mdadeel/Toypia)]
 
 # Navigate to the project directory
 cd toytopia
