@@ -3,11 +3,43 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Eye, ShoppingBag, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useFavorites } from '@/hooks/useFavorites';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
 
 const ModernToyCard = ({ toy }) => {
   const { id, name, description, price, image, category, rating = 0 } = toy;
-  const [isFavorite, setIsFavorite] = useState(false);
+  const { user } = useAuth();
+  const { isFavorite: checkIsFavorite, addToFavorites, removeFromFavorites } = useFavorites();
+  const [localIsFavorite, setLocalIsFavorite] = useState(false);
+
+  // Update local state when the global favorite status changes
+  useEffect(() => {
+    setLocalIsFavorite(checkIsFavorite(id));
+  }, [checkIsFavorite, id]);
+
+  const toggleFavorite = () => {
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please log in to add favorites",
+      });
+      return;
+    }
+
+    if (checkIsFavorite(id)) {
+      const success = removeFromFavorites(id);
+      if (success) {
+        toast({ title: "Removed from favorites" });
+      }
+    } else {
+      const success = addToFavorites(id);
+      if (success) {
+        toast({ title: "Added to favorites!" });
+      }
+    }
+  };
 
   return (
     <Card className="rounded-lg sm:rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200 flex flex-col h-full">
@@ -52,11 +84,11 @@ const ModernToyCard = ({ toy }) => {
           
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button 
-              onClick={() => setIsFavorite(!isFavorite)}
+              onClick={toggleFavorite}
               className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+              aria-label={localIsFavorite ? "Remove from favorites" : "Add to favorites"}
             >
-              <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${isFavorite ? 'fill-current text-red-500' : 'text-gray-400'}`} />
+              <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${localIsFavorite ? 'fill-current text-red-500' : 'text-gray-400'}`} />
             </button>
             
             <Link to={`/toy/${id}`}>
