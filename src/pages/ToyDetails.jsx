@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useFavorites } from '@/hooks/useFavorites';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,7 @@ const reviewSchema = z.object({
 const ToyDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const { isFavorite: isToyFavorite, addToFavorites, removeFromFavorites, loadFavorites } = useFavorites();
   const navigate = useNavigate();
   const [toy, setToy] = useState(null);
   const [reviews, setReviews] = useState([]);
@@ -46,6 +48,10 @@ const ToyDetails = () => {
       document.title = `${toy.name} | ToyTopia`;
     }
   }, [toy]);
+
+  useEffect(() => {
+    setIsFavorite(isToyFavorite(id));
+  }, [isToyFavorite, id]);
 
   const fetchToyDetails = async () => {
     try {
@@ -74,14 +80,6 @@ const ToyDetails = () => {
     }
   };
 
-  const checkFavorite = () => {
-    if (!user) return;
-    
-    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const isFav = favorites.some(fav => fav.toyId === id && fav.userId === user.uid);
-    setIsFavorite(isFav);
-  };
-
   const toggleFavorite = () => {
     if (!user) {
       toast({
@@ -92,20 +90,19 @@ const ToyDetails = () => {
       return;
     }
 
-    let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-    const favIndex = favorites.findIndex(fav => fav.toyId === id && fav.userId === user.uid);
-    
-    if (favIndex > -1) {
-      favorites = favorites.filter(fav => fav.toyId !== id || fav.userId !== user.uid);
-      setIsFavorite(false);
-      toast({ title: "Removed from favorites" });
+    if (isFavorite) {
+      const success = removeFromFavorites(id);
+      if (success) {
+        setIsFavorite(false);
+        toast({ title: "Removed from favorites" });
+      }
     } else {
-      favorites.push({ toyId: id, userId: user.uid, date: new Date().toISOString() });
-      setIsFavorite(true);
-      toast({ title: "Added to favorites!" });
+      const success = addToFavorites(id);
+      if (success) {
+        setIsFavorite(true);
+        toast({ title: "Added to favorites!" });
+      }
     }
-    
-    localStorage.setItem('favorites', JSON.stringify(favorites));
   };
 
   const submitReview = () => {

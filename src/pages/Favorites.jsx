@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useFavorites } from '@/hooks/useFavorites';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Star, Package, Heart, ShoppingBag, User, Search } from 'lucide-react';
@@ -10,7 +11,8 @@ import toysData from '@/data/toys.json';
 
 const Favorites = () => {
   const { user, loading: authLoading } = useAuth();
-  const [favorites, setFavorites] = useState([]);
+  const { favorites: favoriteIds, removeFromFavorites, loadFavorites, favoriteCount } = useFavorites();
+  const [favoriteToys, setFavoriteToys] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -25,12 +27,8 @@ const Favorites = () => {
     }
     
     try {
-      const favoriteIds = JSON.parse(localStorage.getItem('favorites') || '[]')
-        .filter(fav => fav.userId === user.uid)
-        .map(fav => fav.toyId);
-      
-      const favoriteToys = toysData.toys.filter(toy => favoriteIds.includes(toy.id));
-      setFavorites(favoriteToys);
+      const favoriteToys = toysData.toys.filter(toy => favoriteIds.map(fav => fav.toyId).includes(toy.id));
+      setFavoriteToys(favoriteToys);
     } catch (error) {
       toast({
         title: "Error loading favorites",
@@ -40,7 +38,17 @@ const Favorites = () => {
     } finally {
       setLoading(false);
     }
-  }, [user, authLoading]);
+  }, [user, authLoading, favoriteIds]);
+
+  const handleRemoveFavorite = (toyId, toyName) => {
+    const success = removeFromFavorites(toyId);
+    if (success) {
+      toast({
+        title: "Removed from favorites",
+        description: `${toyName} is no longer in your favorites`,
+      });
+    }
+  };
 
   if (authLoading || loading) {
     return (
