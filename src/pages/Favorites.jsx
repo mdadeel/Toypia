@@ -112,13 +112,13 @@ const Favorites = () => {
             My Favorite Toys
           </h1>
           <p className="text-muted-foreground text-sm sm:text-base">
-            {favorites.length > 0 
-              ? `You have ${favorites.length} favorite toys saved` 
+            {favoriteToys.length > 0 
+              ? `You have ${favoriteToys.length} favorite toys saved` 
               : "You haven't added any toys to favorites yet"}
           </p>
         </div>
 
-        {favorites.length === 0 ? (
+        {favoriteToys.length === 0 ? (
           <div className="text-center py-12 sm:py-20">
             <div className="relative inline-block mb-4 sm:mb-6">
               <Heart className="h-16 sm:h-24 w-16 sm:w-24 text-muted-foreground/30 mx-auto" />
@@ -137,7 +137,7 @@ const Favorites = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {favorites.map((toy, index) => (
+            {favoriteToys.map((toy, index) => (
               <Card 
                 key={toy.id} 
                 className="group overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 flex flex-col"
@@ -156,19 +156,7 @@ const Favorites = () => {
                   )}
                   <button 
                     className="absolute top-2 sm:top-3 right-2 sm:right-3 p-1.5 sm:p-2 rounded-full bg-background/80 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground transition-colors"
-                    onClick={() => {
-                      let userFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-                      userFavorites = userFavorites.filter(fav => !(fav.toyId === toy.id && fav.userId === user.uid));
-                      localStorage.setItem('favorites', JSON.stringify(userFavorites));
-                      
-                      // Update state
-                      setFavorites(prev => prev.filter(favToy => favToy.id !== toy.id));
-                      
-                      toast({
-                        title: "Removed from favorites",
-                        description: `${toy.name} is no longer in your favorites`,
-                      });
-                    }}
+                    onClick={() => handleRemoveFavorite(toy.id, toy.name)}
                   >
                     <Heart className="h-3 sm:h-4 w-3 sm:w-4 fill-current" />
                   </button>

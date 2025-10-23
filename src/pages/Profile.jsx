@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useFavorites } from '@/hooks/useFavorites';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -14,9 +15,10 @@ import Footer from '@/components/Footer';
 
 const Profile = () => {
   const { user, updateProfile, loading: authLoading } = useAuth();
+  const { favorites: favoriteIds, removeFromFavorites, loadFavorites } = useFavorites();
   const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
-  const [favorites, setFavorites] = useState([]);
+  const [favoriteToys, setFavoriteToys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState('');
@@ -37,7 +39,7 @@ const Profile = () => {
     setName(user.displayName || user.email?.split('@')[0] || '');
     setPhotoURL(user.photoURL || '');
     fetchUserData();
-  }, [user, authLoading, navigate]);
+  }, [user, authLoading, favoriteIds, navigate]);
 
   const fetchUserData = async () => {
     if (!user) return;
@@ -47,14 +49,9 @@ const Profile = () => {
       const userReviews = allReviews.filter(review => review.userId === user.uid);
       setReviews(userReviews);
 
-      const allFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      const userFavoriteIds = allFavorites
-        .filter(fav => fav.userId === user.uid)
-        .map(fav => fav.toyId);
-      
       const toysData = await import('@/data/toys.json');
-      const favoriteToys = toysData.toys.filter(toy => userFavoriteIds.includes(toy.id));
-      setFavorites(favoriteToys);
+      const favoriteToys = toysData.toys.filter(toy => favoriteIds.map(fav => fav.toyId).includes(toy.id));
+      setFavoriteToys(favoriteToys);
     } catch (error) {
       toast({
         title: "Error",
@@ -103,21 +100,11 @@ const Profile = () => {
   };
 
   const removeFavorite = async (toyId) => {
-    try {
-      let allFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
-      allFavorites = allFavorites.filter(fav => !(fav.toyId === toyId && fav.userId === user.uid));
-      localStorage.setItem('favorites', JSON.stringify(allFavorites));
-
+    const success = removeFromFavorites(toyId);
+    if (success) {
       toast({
         title: "Success",
         description: "Removed from favorites",
-      });
-      fetchUserData();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
       });
     }
   };
@@ -282,16 +269,16 @@ const Profile = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 fill-current" />
-                My Favorites ({favorites.length})
+                My Favorites ({favoriteToys.length})
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 sm:space-y-4">
-              {favorites.length === 0 ? (
+              {favoriteToys.length === 0 ? (
                 <p className="text-center text-muted-foreground py-3 sm:py-4 text-sm">
                   No favorites yet. Start adding toys!
                 </p>
               ) : (
-                favorites.map((favorite) => (
+                favoriteToys.map((favorite) => (
                   <div key={favorite.id} className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border border-gray-200">
                     <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-lg bg-gray-100 flex-shrink-0 overflow-hidden">
                       {favorite.image ? (
