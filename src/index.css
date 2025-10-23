@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Simple color palette */
+    --background: 0 0% 100%; /* Pure white background */
+    --foreground: 220 10% 15%; /* Dark gray for text */
+
+    --card: 0 0% 100%; /* White cards */
+    --card-foreground: 220 10% 15%; /* Dark text on cards */
+
+    --popover: 0 0% 100%; /* White popovers */
+    --popover-foreground: 220 10% 15%; /* Dark text */
+
+    /* Simple primary colors */
+    --primary: 220 80% 50%; /* Blue */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+
+    /* Simple secondary colors */
+    --secondary: 280 30% 50%; /* Purple */
+    --secondary-foreground: 0 0% 100%; /* White text on secondary */
+
+    /* Muted colors */
+    --muted: 220 10% 95%; /* Light gray */
+    --muted-foreground: 220 10% 50%; /* Medium gray */
+
+    /* Accent colors */
+    --accent: 20 80% 60%; /* Orange */
+    --accent-foreground: 0 0% 100%; /* White text on accent */
+
+    /* Destructive colors */
+    --destructive: 0 70% 50%; /* Red */
+    --destructive-foreground: 0 0% 100%; /* White text */
+
+    --border: 220 10% 85%; /* Light gray borders */
+    --input: 220 10% 85%; /* Light gray inputs */
+    --ring: 220 80% 50%; /* Blue ring */
+
+    --radius: 0.5rem; /* Standard rounded corners */
+
+    /* Simple shadows */
+    --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+    --shadow-hover: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+
+    /* Simple transitions */
+    --transition-smooth: all 0.2s ease-in-out;
+    --transition-bounce: all 0.2s ease-in-out;
+  }
+
+  .dark {
+    --background: 220 10% 10%; /* Dark background */
+    --foreground: 0 0% 95%; /* Light text */
+
+    --card: 220 10% 15%; /* Dark card */
+    --card-foreground: 0 0% 95%; /* Light text on card */
+
+    --popover: 220 10% 15%; /* Dark popover */
+    --popover-foreground: 0 0% 95%; /* Light text */
+
+    --primary: 220 80% 60%; /* Lighter blue */
+    --primary-foreground: 0 0% 100%; /* White text */
+
+    --secondary: 280 40% 60%; /* Lighter purple */
+    --secondary-foreground: 0 0% 100%; /* White text */
+
+    --muted: 220 10% 20%; /* Darker gray */
+    --muted-foreground: 0 0% 70%; /* Lighter gray text */
+
+    --accent: 20 90% 70%; /* Lighter orange */
+    --accent-foreground: 0 0% 100%; /* White text */
+
+    --destructive: 0 80% 60%; /* Lighter red */
+    --destructive-foreground: 0 0% 100%; /* White text */
+
+    --border: 220 10% 25%; /* Dark gray borders */
+    --input: 220 10% 25%; /* Dark gray inputs */
+    --ring: 220 80% 60%; /* Lighter blue ring */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
