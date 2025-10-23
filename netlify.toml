@@ -6,11 +6,8 @@
 # Firebase API keys are designed to be public and are secured via Firebase Security Rules
 [build.environment]
   SECRETS_SCAN_OMIT_KEYS = "VITE_FIREBASE_API_KEY,VITE_FIREBASE_APP_ID,VITE_FIREBASE_AUTH_DOMAIN,VITE_FIREBASE_MESSAGING_SENDER_ID,VITE_FIREBASE_PROJECT_ID,VITE_FIREBASE_STORAGE_BUCKET"
-<<<<<<< HEAD
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-=======
->>>>>>> 91fa8239264fdf53ee6c0d87b71c3f73d76e6ce3
