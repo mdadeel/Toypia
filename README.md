@@ -41,11 +41,11 @@ A modern web application connecting families with local toy sellers. Browse, rev
 ```sh
 # Clone the repository
 git clone https://github.com/mdadeel/toytopia.git
-<<<<<<< HEAD
+
 git clone https://github.com/mdadeel/toytopia
-=======
+
 git clone https://github.com/mdadeel/Toypia
->>>>>>> 91fa8239264fdf53ee6c0d87b71c3f73d76e6ce3
+
 
 # Navigate to the project directory
 cd toytopia
